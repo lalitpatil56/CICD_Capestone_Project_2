@@ -1,4 +1,60 @@
 pipeline {
+  agent any
+
+  environment {
+    SONAR_URL = "http://54.84.83.109:9000"
+    GIT_REPO_NAME = "CICD_Capestone_Project_2"
+    GIT_USER_NAME = "lalitpatil56"
+    DOCKER_IMAGE = "lalit0506/springboot-app:${BUILD_NUMBER}"
+  }
+
+  stages {
+    stage('CI Pipeline') {
+      steps {
+        script {
+          docker.image('lalit0506/maven-docker-agent:v1').inside('--user root -v /var/run/docker.sock:/var/run/docker.sock') {
+
+            // Mark workspace as safe for Git
+            sh 'git config --global --add safe.directory /var/lib/jenkins/workspace/cap-2'
+
+            // === Build and Test ===
+            sh '''
+              cd java-maven-sonar-argocd-helm-k8s/spring-boot-app
+              mvn clean package
+            '''
+
+            // === Static Code Analysis ===
+            withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
+              sh '''
+                cd java-maven-sonar-argocd-helm-k8s/spring-boot-app
+                mvn org.sonarsource.scanner.maven:sonar-maven-plugin:4.0.0.4121:sonar \
+                  -Dsonar.login=$SONAR_AUTH_TOKEN \
+                  -Dsonar.host.url=$SONAR_URL
+              '''
+            }
+
+            // === Build and Push Docker Image ===
+            withCredentials([usernamePassword(credentialsId: 'docker-cred', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+              sh '''
+                cd java-maven-sonar-argocd-helm-k8s/spring-boot-app
+                docker build -t $DOCKER_IMAGE .
+                echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                docker push $DOCKER_IMAGE
+                docker logout
+              '''
+            }
+
+            
+          }
+        }
+      }
+    }
+  }
+}
+
+
+/*
+pipeline {
   agent {
     docker {
       image 'lalit0506/maven-docker-agent:v1'
@@ -66,3 +122,4 @@ pipeline {
     }
   }
 }
+*/
