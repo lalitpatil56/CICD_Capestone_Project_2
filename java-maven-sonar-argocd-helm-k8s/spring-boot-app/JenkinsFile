@@ -1,3 +1,5 @@
+/*
+
 pipeline {
   agent any
 
@@ -46,9 +48,10 @@ pipeline {
     }
   }
 }
+*/
 
 
-/*
+
 pipeline {
   agent {
     docker {
@@ -117,4 +120,3 @@ pipeline {
     }
   }
 }
-*/
