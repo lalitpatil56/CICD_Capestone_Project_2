@@ -50,8 +50,6 @@ pipeline {
 }
 */
 
-/*
-
 pipeline {
   agent {
     docker {
@@ -59,6 +57,8 @@ pipeline {
       args '--user root -v /var/run/docker.sock:/var/run/docker.sock' // mount Docker socket to access the host's Docker daemon
     }
   }
+}
+  /*
   stages {
     stage('Checkout') {
       steps {
@@ -120,21 +120,5 @@ pipeline {
     }
   }
 }
-*/
 
-pipeline {
-    agent {
-        docker {
-            image 'lalit0506/maven-docker-agent:v1'
-            args '-u root --entrypoint=cat'
-        }
-    }
-    stages {
-        stage('Verify Tools') {
-            steps {
-                sh 'mvn -v'
-                sh 'docker --version'
-            }
-        }
-    }
-}
+*/
