@@ -126,14 +126,14 @@ pipeline {
     agent {
         docker {
             image 'lalit0506/maven-docker-agent:v1'
-            args '-u root'
+            args '-u root --entrypoint=cat'
         }
     }
-
     stages {
-        stage('Test Maven') {
+        stage('Verify Tools') {
             steps {
                 sh 'mvn -v'
+                sh 'docker --version'
             }
         }
     }
