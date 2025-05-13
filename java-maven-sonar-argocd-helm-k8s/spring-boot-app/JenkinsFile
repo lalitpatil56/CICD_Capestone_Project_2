@@ -54,7 +54,8 @@ pipeline {
   agent {
     docker {
       image 'lalit0506/maven-docker-agent:v1'
-      args '-u root -v /var/run/docker.sock:/var/run/docker.sock --entrypoint=tail -- tail -f /dev/null'
+      args '-u root -v /var/run/docker.sock:/var/run/docker.sock --entrypoint=tail lalit0506/maven-docker-agent:v1 -- tail -f /dev/null'
+      //args '--user root -v /var/run/docker.sock:/var/run/docker.sock' // mount Docker socket to access the host's Docker daemon
     }
   }
 
@@ -62,11 +63,9 @@ pipeline {
     stage('Checkout') {
       steps {
         sh 'echo passed'
-        // git branch: 'main', url: 'https://github.com/lalitpatil56/CICD_Capestone_Project_2.git'
+        //git branch: 'main', url: 'https://github.com/lalitpatil56/CICD_Capestone_Project_2.git'
       }
     }
-  }
-
     /*
     stage('Build and Test') {
       steps {
