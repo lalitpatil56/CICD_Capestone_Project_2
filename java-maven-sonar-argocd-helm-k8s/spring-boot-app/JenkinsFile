@@ -50,7 +50,7 @@ pipeline {
 }
 */
 
-
+/*
 
 pipeline {
   agent {
@@ -119,4 +119,22 @@ pipeline {
         }
     }
   }
+}
+*/
+
+pipeline {
+    agent {
+        docker {
+            image 'lalit0506/maven-docker-agent:v1'
+            args '-u root'
+        }
+    }
+
+    stages {
+        stage('Test Maven') {
+            steps {
+                sh 'mvn -v'
+            }
+        }
+    }
 }
